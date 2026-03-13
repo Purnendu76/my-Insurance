@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { IconDashboard, IconListCheck, IconShieldHalf, IconCar, IconHeartbeat, IconPlane, IconBuilding, IconUser, IconDots, IconCalculator,  } from '@tabler/icons-react';
+import { IconDashboard, IconListCheck, IconCar, IconHeartbeat, IconPlane, IconBuilding, IconUser, IconDots, IconCalculator, IconReceiptTax, IconFileCertificate, IconReportMoney, IconRefresh, IconBriefcase,  } from '@tabler/icons-react';
 import type { AppRoute } from '../utils/routes';
 import AppLayout from '../layouts/AppLayout';
 import { SuspenseLoader } from '../components/loaders/SuspenseLoader';
@@ -36,7 +36,7 @@ export const appRoutesConfig: AppRoute = {
   children: [
     {
       label: 'Dashboard',
-      path: '', // empty path acts as index
+      path: '', 
       icon: <IconDashboard size="1rem" stroke={1.5} />,
       element: (
         <Suspense fallback={<SuspenseLoader />}>
@@ -47,7 +47,7 @@ export const appRoutesConfig: AppRoute = {
     {
       label: 'My Policies',
       path: 'my-policies',
-      icon: <IconShieldHalf size="1rem" stroke={1.5} />,
+      icon: <IconBriefcase size="1rem" stroke={1.5} />,
       children: [
         {
           label: 'Motor',
@@ -115,7 +115,7 @@ export const appRoutesConfig: AppRoute = {
     {
       label: 'My Renewal',
       path: 'my-renewal',
-      icon: <IconShieldHalf size="1rem" stroke={1.5} />,
+      icon: <IconRefresh size="1rem" stroke={1.5} />,
       children: [
         {
           label: 'Motor',
@@ -162,7 +162,7 @@ export const appRoutesConfig: AppRoute = {
     {
       label: 'GST Registration',
       path: 'gst-registration',
-      icon: <IconBuilding size="1rem" stroke={1.5} />,
+      icon: <IconFileCertificate size="1rem" stroke={1.5} />,
       element: (
         <Suspense fallback={<SuspenseLoader />}>
           <GSTRegistration />
@@ -172,7 +172,7 @@ export const appRoutesConfig: AppRoute = {
     {
       label: 'e-TDS',
       path: 'e-tds',
-      icon: <IconBuilding size="1rem" stroke={1.5} />,
+      icon: <IconReceiptTax size="1rem" stroke={1.5} />,
       element: (
         <Suspense fallback={<SuspenseLoader />}>
           <ETDS />
@@ -182,7 +182,7 @@ export const appRoutesConfig: AppRoute = {
     {
       label: 'ITR Filing',
       path: 'itr-filing',
-      icon: <IconBuilding size="1rem" stroke={1.5} />,
+      icon: <IconReportMoney size="1rem" stroke={1.5} />,
       element: (
         <Suspense fallback={<SuspenseLoader />}>
           <ITRFiling />

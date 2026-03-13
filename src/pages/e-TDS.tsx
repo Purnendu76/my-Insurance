@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import {
   Box, Button, Flex, Modal, Text, Title, Paper,
-  Table, Badge, ActionIcon, TextInput, Group, Stack
+  Table, Badge, ActionIcon, TextInput, Group, Stack,
+  Drawer, Grid, Divider
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -57,10 +58,17 @@ const initialData: ETDSRecord[] = [
 export const ETDSPage = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [uploadOpened, { open: openUpload, close: closeUpload }] = useDisclosure(false);
+  const [previewOpened, { open: openPreview, close: closePreview }] = useDisclosure(false);
   const [uploadFileName, setUploadFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [records, setRecords] = useState<ETDSRecord[]>(initialData);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRecord, setSelectedRecord] = useState<ETDSRecord | null>(null);
+
+  const handlePreview = (record: ETDSRecord) => {
+    setSelectedRecord(record);
+    openPreview();
+  };
 
   const handleFormSubmit = (values: {
     tanNumber: string; deducteePan: string; formType: string;
@@ -144,7 +152,7 @@ export const ETDSPage = () => {
                   <Badge color={statusColor(r.status)} variant="dot">{r.status}</Badge>
                 </Table.Td>
                 <Table.Td>
-                  <ActionIcon variant="light" color="blue" title="View">
+                  <ActionIcon variant="light" color="blue" title="Quick Preview" onClick={() => handlePreview(r)}>
                     <IconEye size="1.1rem" />
                   </ActionIcon>
                 </Table.Td>
@@ -164,7 +172,6 @@ export const ETDSPage = () => {
         size="md"
       >
         <Stack gap="md" p="md">
-          {/* Hidden file input */}
           <input
             type="file"
             ref={fileInputRef}
@@ -188,7 +195,7 @@ export const ETDSPage = () => {
             <Text size="sm" fw={500}>
               {uploadFileName ? uploadFileName : 'Select File or Drag & Drop'}
             </Text>
-            <Text size="xs" color="dimmed">Supported: .pdf, .xlsx, .csv (Max 5MB)</Text>
+            <Text size="xs" c="dimmed">Supported: .pdf, .xlsx, .csv (Max 5MB)</Text>
           </Paper>
           <Group justify="flex-end">
             <Button variant="light" color="gray" onClick={closeUpload}>Cancel</Button>
@@ -207,6 +214,68 @@ export const ETDSPage = () => {
       >
         <ETDSFilingForm onSubmitSuccess={handleFormSubmit} />
       </Modal>
+
+      {/* Quick Preview Drawer */}
+      <Drawer
+        opened={previewOpened}
+        onClose={closePreview}
+        title={<Text fw={700} size="lg" c="blue.7">e-TDS Record Preview</Text>}
+        position="right"
+        size="lg"
+        padding="xl"
+      >
+        {selectedRecord && (
+          <Stack gap="lg">
+            {/* TAN Badge Header */}
+            <Paper withBorder p="sm" radius="md" bg="gray.0">
+              <Group justify="space-between">
+                <Text fw={600} size="sm" c="dimmed">TAN Number</Text>
+                <Badge size="xl" radius="sm" variant="filled" color="blue">{selectedRecord.tanNumber}</Badge>
+              </Group>
+            </Paper>
+
+            {/* Filing Information */}
+            <Paper withBorder p="md" radius="md" shadow="xs">
+              <Text size="sm" fw={600} c="#343a40" mb="sm">Filing Information</Text>
+              <Divider mb="sm" />
+              <Grid gutter="sm">
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Form Type</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.formType}</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Quarter</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.quarter}</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Financial Year</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.financialYear}</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Deductee PAN</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.deducteePan}</Text>
+                </Grid.Col>
+              </Grid>
+            </Paper>
+
+            {/* TDS Amount & Status */}
+            <Paper withBorder p="md" radius="md" shadow="xs" style={{ borderLeft: '4px solid #1c7ed6' }}>
+              <Group justify="space-between" align="flex-start">
+                <div>
+                  <Text size="sm" c="dimmed" fw={500} mb="xs">TDS Amount</Text>
+                  <Text size="xl" fw={700} c="blue.7">{selectedRecord.tdsAmount}</Text>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <Text size="sm" c="dimmed" fw={500} mb="xs">Filing Status</Text>
+                  <Badge color={statusColor(selectedRecord.status)} variant="filled" size="md">
+                    {selectedRecord.status}
+                  </Badge>
+                </div>
+              </Group>
+            </Paper>
+          </Stack>
+        )}
+      </Drawer>
     </Box>
   );
 };

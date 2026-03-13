@@ -14,10 +14,12 @@ import {
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useForm } from '@mantine/form';
+import { notifications } from '@mantine/notifications';
 import {
   IconFileText,
   IconBuildingBank,
   IconUsers,
+  IconCheck,
 } from '@tabler/icons-react';
 
 const labelStyle = { label: { color: '#495057', fontWeight: 600, fontSize: '13px' } };
@@ -67,6 +69,13 @@ export const ETDSFilingForm = ({ onSubmitSuccess }: ETDSFilingFormProps) => {
 
   const handleSubmit = (values: FormValues) => {
     onSubmitSuccess?.(values);
+    notifications.show({
+      title: 'e-TDS Filed Successfully',
+      message: 'Your e-TDS details have been submitted.',
+      color: 'teal',
+      icon: <IconCheck size="1.1rem" />,
+      autoClose: 4000,
+    });
     form.reset();
   };
 

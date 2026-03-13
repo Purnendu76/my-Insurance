@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react';
 import {
   Box, Button, Flex, Modal, Text, Title, Paper,
-  Table, Badge, ActionIcon, TextInput, Group, Stack
+  Table, Badge, ActionIcon, TextInput, Group, Stack,
+  Drawer, Grid, Divider
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import {
@@ -57,10 +58,17 @@ const initialData: ITRRecord[] = [
 const ITRFiling = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [uploadOpened, { open: openUpload, close: closeUpload }] = useDisclosure(false);
+  const [previewOpened, { open: openPreview, close: closePreview }] = useDisclosure(false);
   const [uploadFileName, setUploadFileName] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [records, setRecords] = useState<ITRRecord[]>(initialData);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRecord, setSelectedRecord] = useState<ITRRecord | null>(null);
+
+  const handlePreview = (record: ITRRecord) => {
+    setSelectedRecord(record);
+    openPreview();
+  };
 
   const handleFormSubmit = (values: {
     name: string; email: string; phone: string; city: string;
@@ -144,7 +152,7 @@ const ITRFiling = () => {
                   <Badge color={statusColor(r.status)} variant="dot">{r.status}</Badge>
                 </Table.Td>
                 <Table.Td>
-                  <ActionIcon variant="light" color="blue" title="Preview">
+                  <ActionIcon variant="light" color="blue" title="Quick Preview" onClick={() => handlePreview(r)}>
                     <IconEye size="1.1rem" />
                   </ActionIcon>
                 </Table.Td>
@@ -164,7 +172,6 @@ const ITRFiling = () => {
         size="md"
       >
         <Stack gap="md" p="md">
-          {/* Hidden file input */}
           <input
             type="file"
             ref={fileInputRef}
@@ -188,7 +195,7 @@ const ITRFiling = () => {
             <Text size="sm" fw={500}>
               {uploadFileName ? uploadFileName : 'Select File or Drag & Drop'}
             </Text>
-            <Text size="xs" color="dimmed">Supported: .pdf, .xlsx, .csv (Max 5MB)</Text>
+            <Text size="xs" c="dimmed">Supported: .pdf, .xlsx, .csv (Max 5MB)</Text>
           </Paper>
           <Group justify="flex-end">
             <Button variant="light" color="gray" onClick={closeUpload}>Cancel</Button>
@@ -207,6 +214,80 @@ const ITRFiling = () => {
       >
         <ITRFilingForm onSubmitSuccess={handleFormSubmit} />
       </Modal>
+
+      {/* Quick Preview Drawer */}
+      <Drawer
+        opened={previewOpened}
+        onClose={closePreview}
+        title={<Text fw={700} size="lg" c="blue.7">ITR Record Preview</Text>}
+        position="right"
+        size="lg"
+        padding="xl"
+      >
+        {selectedRecord && (
+          <Stack gap="lg">
+            {/* Name Badge Header */}
+            <Paper withBorder p="sm" radius="md" bg="gray.0">
+              <Group justify="space-between">
+                <Text fw={600} size="sm" c="dimmed">Applicant</Text>
+                <Badge size="xl" radius="sm" variant="filled" color="blue">{selectedRecord.name}</Badge>
+              </Group>
+            </Paper>
+
+            {/* Personal Details */}
+            <Paper withBorder p="md" radius="md" shadow="xs">
+              <Text size="sm" fw={600} c="#343a40" mb="sm">Personal Details</Text>
+              <Divider mb="sm" />
+              <Grid gutter="sm">
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Full Name</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.name}</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Phone Number</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.phone}</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Email</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.email}</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>City</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.city}</Text>
+                </Grid.Col>
+              </Grid>
+            </Paper>
+
+            {/* Bank Details */}
+            <Paper withBorder p="md" radius="md" shadow="xs">
+              <Text size="sm" fw={600} c="#343a40" mb="sm">Bank Details</Text>
+              <Divider mb="sm" />
+              <Grid gutter="sm">
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Bank Name</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.bankName}</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text size="xs" c="dimmed" fw={500}>Account Number</Text>
+                  <Text size="sm" fw={600}>{selectedRecord.accountNumber}</Text>
+                </Grid.Col>
+              </Grid>
+            </Paper>
+
+            {/* Status */}
+            <Paper withBorder p="md" radius="md" shadow="xs" style={{ borderLeft: '4px solid #1c7ed6' }}>
+              <Group justify="space-between" align="center">
+                <div>
+                  <Text size="sm" c="dimmed" fw={500} mb="xs">Filing Status</Text>
+                  <Badge color={statusColor(selectedRecord.status)} variant="filled" size="lg">
+                    {selectedRecord.status}
+                  </Badge>
+                </div>
+              </Group>
+            </Paper>
+          </Stack>
+        )}
+      </Drawer>
     </Box>
   );
 };
