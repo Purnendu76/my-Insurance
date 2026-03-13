@@ -8,7 +8,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { DatePickerInput } from '@mantine/dates';
 import { 
   IconEye, IconSearch, IconFilter, IconPlus, IconUpload, 
-  IconDatabase, IconBolt, IconFileSpreadsheet 
+   IconFileSpreadsheet 
 } from '@tabler/icons-react';
 import VehicleDetailsMantine from '../../components/VehicleDetailsForm';
 
@@ -167,27 +167,27 @@ export const Motor = () => {
   return (
     <Box p="md">
       {/* Header Section */}
-      <Flex justify="space-between" align="center" mb="lg" wrap="wrap" gap="md">
-        <Title order={3} c="blue.6" style={{ letterSpacing: '0.5px' }}>MOTOR POLICIES</Title>
-        
-        <Group gap="xs">
-          <TextInput 
-            placeholder="Search" 
+      <Flex justify="space-between" align="flex-start" mb="lg" wrap="wrap" gap="md">
+        {/* Left: Title + Buttons */}
+        <Box>
+          <Title order={3} c="blue.6" style={{ letterSpacing: '0.5px' }} mb="xs">MOTOR POLICIES</Title>
+          <Group gap="xs">
+            <Button leftSection={<IconFilter size={16} />} color="green.8" onClick={toggleFilter}>Filter</Button>
+            <Button leftSection={<IconPlus size={16} />} color="green.8" onClick={open}>Add New</Button>
+            <Button leftSection={<IconUpload size={16} />} color="green.8" onClick={openUpload}>Upload Pdf</Button>
+            <Button leftSection={<IconFileSpreadsheet size={16} />} color="blue.7">Create Sheet</Button>
+          </Group>
+        </Box>
+
+        {/* Right: Search */}
+        <Group gap="xs" align="flex-end">
+          <TextInput
+            placeholder="Search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.currentTarget.value)}
-            style={{ width: 300 }}
+            style={{ width: 260 }}
           />
           <Button leftSection={<IconSearch size={16} />} variant="filled">Search</Button>
-        </Group>
-
-        <Group gap="xs">
-          <Button leftSection={<IconFilter size={16} />} color="green.8" onClick={toggleFilter}>Filter</Button>
-          <Button leftSection={<IconPlus size={16} />} color="green.8" onClick={open}>Add New</Button>
-          <Button leftSection={<IconUpload size={16} />} color="green.8" onClick={openUpload}>Upload Pdf</Button>
-          <Button leftSection={<IconUpload size={16} />} color="green.8" onClick={openUpload}>Upload Pdf 2.0</Button>
-          <Button leftSection={<IconDatabase size={16} />} color="orange.6">Bulk</Button>
-          <Button leftSection={<IconBolt size={16} />} color="blue.7">Add Quick Motor Policy</Button>
-          <Button leftSection={<IconFileSpreadsheet size={16} />} color="blue.7">Create Sheet</Button>
         </Group>
       </Flex>
 

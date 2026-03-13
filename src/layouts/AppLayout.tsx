@@ -19,7 +19,7 @@ export function AppLayout() {
     >
       <AppHeader opened={opened} toggle={toggle} />
       <AppSidebar />
-      <AppShell.Main bg="gray.0">
+      <AppShell.Main bg="gray.0" style={{ paddingTop: "30px" }}>
         <Outlet />
       </AppShell.Main>
     </AppShell>
